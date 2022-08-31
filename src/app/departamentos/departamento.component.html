@@ -32,10 +32,11 @@
                   <td>{{ departamento.nome }}</td>
                   <td>{{ departamento.telefone }}</td>
                   <td class="d-grid d-md-block">
-                    <button type="button" class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto">
+                    <button (click)="salvar(modal, departamento)" type="button"
+                      class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto">
                       <i class="pi pi-user-edit"></i>
                     </button>
-                    <button type="button" class="btn btn-outline-danger">
+                    <button (click)="excluir(departamento)" type="button" class="btn btn-outline-danger">
                       <i class="pi pi-trash"></i>
                     </button>
                   </td>
@@ -52,11 +53,11 @@
 
 <ng-template #modal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Cadastrar novo departamento</h4>
+    <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de departamento</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
   </div>
-  <div class="modal-body">
-    <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+  <form [formGroup]="form" (ngSubmit)="modal.close('salvar')">
+    <div class="modal-body">
       <div class="form-group mb-3">
         <label for="nome" class="form-label">Nome do Departamento</label>
         <input formControlName="nome" class="form-control" type="text" placeholder="Digite o nome do departamento">
@@ -67,9 +68,9 @@
         <input formControlName="telefone" class="form-control" type="text"
           placeholder="Digite o telefone do departamento">
       </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-dark">Salvar</button>
-  </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-dark">Salvar</button>
+      </div>
+    </div>
+  </form>
 </ng-template>

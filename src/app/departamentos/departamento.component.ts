@@ -23,6 +23,7 @@ export class DepartamentoComponent implements OnInit {
     this.departamentos$ = this.departamentoService.selecionarTodos();
 
     this.form = this.fb.group({
+      id: new FormControl(""),
       nome: new FormControl(""),
       telefone: new FormControl("")
     });
@@ -36,18 +37,42 @@ export class DepartamentoComponent implements OnInit {
     return this.form.get("telefone");
   }
 
-  public async salvar(modal: TemplateRef<any>) {
+  get tituloModal(): string {
+    return this.id?.value ? "Atualização" : "Cadastro";
+  }
+
+  get id() {
+    return this.form.get("id");
+  }
+
+  public async salvar(modal: TemplateRef<any>, departamento?: Departamento) {
     this.form.reset();
+
+    if (departamento) {
+      this.form.setValue(departamento);
+    }
 
     try {
       await this.modalService.open(modal).result;
 
-      this.departamentoService.inserir(this.form.value);
+      if (departamento) {
+        await this.departamentoService.editar(this.form.value);
+      }
+
+      else {
+        await this.departamentoService.inserir(this.form.value);
+      }
+
+      console.log(`O departamento foi salvo com sucesso`);
 
     } catch (error) {
       console.log(error);
     }
 
+  }
+
+  public excluir(departamento: Departamento) {
+    this.departamentoService.excluir(departamento);
   }
 }
 

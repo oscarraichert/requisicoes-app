@@ -7,12 +7,21 @@ import { Departamento } from '../models/departamento.model';
   providedIn: 'root'
 })
 export class DepartamentoService {
+  private registros: AngularFirestoreCollection<Departamento>;
 
-  inserir(registro: Departamento) {
+  async inserir(registro: Departamento): Promise<any> {
+    if (!registro) {
+      return Promise.reject("item inválido");
+    }
 
+    const res = await this.registros.add(registro);
+    registro.id = res.id;
+    this.registros.doc(res.id).set(registro);
   }
 
-  private registros: AngularFirestoreCollection<Departamento>;
+  public async editar(registro: Departamento): Promise<void> {
+    return this.registros.doc(registro.id).set(registro);
+  }
 
   constructor(private firestore: AngularFirestore) {
     this.registros = this.firestore.collection<Departamento>("departamentos");
@@ -20,5 +29,9 @@ export class DepartamentoService {
 
   public selecionarTodos(): Observable<Departamento[]> {
     return this.registros.valueChanges();
+  }
+
+  public excluir(registro: Departamento): Promise<void> {
+    return this.registros.doc(registro.id).delete();
   }
 }
