@@ -3,20 +3,37 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SobreComponent } from './sobre/sobre.component';
-import { HomeComponent } from './home/home.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AngularFireModule } from "@angular/fire/compat";
+import { environment } from 'src/environments/environment';
+import { AngularFireAuthModule } from "@angular/fire/compat/auth";
+import { AngularFirestoreModule } from "@angular/fire/compat/firestore";
+import { LoginComponent } from './auth/login/login.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AuthenticationService } from './auth/services/authentication.service';
+import { PainelComponent } from './painel/painel.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { DepartamentoModule } from './departamentos/departamento.module';
+import { DepartamentoRoutingModule } from './departamentos/departamento-routing.module';
 
 @NgModule({
   declarations: [
-    HomeComponent,
     AppComponent,
-    SobreComponent
+    LoginComponent,
+    PainelComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    NgbModule,
+    AngularFireModule.initializeApp(environment.firease),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    DepartamentoModule
   ],
-  providers: [],
+  providers: [AuthenticationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

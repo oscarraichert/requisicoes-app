@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-8 col-lg-5 mx-auto text-center">
+      <div class="text-center card-body ">
+        <h1 class="card-title mt-5 text-primary">Sistema de Requisições</h1>
+        <hr>
+
+        <form class="col-md-8 mx-auto" [formGroup]="form" (ngSubmit)="login()">
+
+          <div class="form-group">
+            <label for="email" class="form-label">E-mail</label>
+            <input formControlName="email" class="form-control" type="email"
+              placeholder="Digite seu endereço de e-mail">
+          </div>
+
+          <div class="form-group mt-4">
+            <label for="senha" class="form-label">Senha</label>
+            <input formControlName="senha" class="form-control" type="password" placeholder="Digite sua senha">
+          </div>
+
+          <a role="button" class="text-primary text-decoration-none" (click)="abrirModalRecuperacao(content)">Esqueceu
+            sua senha?</a>
+
+          <div class="d-grid mx-4 gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">
+              <i class="pi pi-sign-in me-2"> Login</i>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Recuperação de conta</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formRecuperacao" (ngSubmit)="modal.close('enviar')">
+      <div class="alert alert-warning" role="alert">
+        Enviaremos um e-mail para o endereço informado com instruções para a recuperação da conta.
+      </div>
+      <div class="form-group mb-3">
+        <label for="emailRecuperacao" class="form-label">Endereço de e-mail</label>
+        <input formControlName="emailRecuperacao" class="form-control" type="email"
+          placeholder="Digite o endereço de e-mail">
+
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('enviar')">Enviar</button>
+  </div>
+</ng-template>
