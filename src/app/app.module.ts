@@ -15,6 +15,8 @@ import { PainelComponent } from './painel/painel.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { DepartamentoModule } from './departamentos/departamento.module';
 import { EquipamentoModule } from './equipamentos/equipamento/equipamento.module';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,7 @@ import { EquipamentoModule } from './equipamentos/equipamento/equipamento.module
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     ReactiveFormsModule,
     NgbModule,
@@ -32,7 +35,10 @@ import { EquipamentoModule } from './equipamentos/equipamento/equipamento.module
     AngularFireAuthModule,
     AngularFirestoreModule,
     DepartamentoModule,
-    EquipamentoModule
+    EquipamentoModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right'
+    }),
   ],
   providers: [AuthenticationService],
   bootstrap: [AppComponent]
