@@ -8,14 +8,14 @@ import { Observable } from 'rxjs';
 })
 
 export class AuthenticationService {
-
-  public logout(): Promise<void> {
-    return this.auth.signOut();
-  }
   public usuarioLogado: Observable<firebase.User | null>;
 
   constructor(private auth: AngularFireAuth) {
     this.usuarioLogado = auth.authState;
+  }
+
+  public cadastrar(email: string, senha: string): Promise<firebase.auth.UserCredential> {
+    return this.auth.createUserWithEmailAndPassword(email, senha);
   }
 
   public login(email: string, senha: string): Promise<firebase.auth.UserCredential> {
@@ -24,5 +24,9 @@ export class AuthenticationService {
 
   public resetarSenha(email: string) {
     return this.auth.sendPasswordResetEmail(email);
+  }
+
+  public logout(): Promise<void> {
+    return this.auth.signOut();
   }
 }

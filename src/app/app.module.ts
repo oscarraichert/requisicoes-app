@@ -13,17 +13,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthenticationService } from './auth/services/authentication.service';
 import { PainelComponent } from './painel/painel.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { DepartamentoModule } from './departamentos/departamento.module';
-import { EquipamentoModule } from './equipamentos/equipamento/equipamento.module';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RequisicaoComponent } from './requisicoes/requisicao.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     PainelComponent,
-    NavbarComponent
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,
@@ -34,8 +33,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AngularFireModule.initializeApp(environment.firease),
     AngularFireAuthModule,
     AngularFirestoreModule,
-    DepartamentoModule,
-    EquipamentoModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right'
     }),

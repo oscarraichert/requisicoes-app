@@ -1,0 +1,147 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-10 col-lg-9 mx-auto">
+      <div class="p-2 pt-5 p-md-5 mb-4 rounded-3">
+        <div class="container">
+
+          <div class="text-center text-md-start">
+            <h1 class="fw-bold text-primary">Funcionários</h1>
+            <hr>
+          </div>
+
+          <div class="d-grid gap-2 d-md-block mt-4">
+            <button (click)="salvar(modal)" type="button" class="btn btn-primary me-md-1 col-md-2">
+              <i class="pi pi-user-plus me-2"></i>Novo
+            </button>
+            <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel">
+              <i class="pi pi-sign-out me-2"></i>Voltar
+            </a>
+          </div>
+          <div>
+            <table class="table table-light table-striped table-hover mt-5">
+              <thead class="thead-dark text-center">
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Função</th>
+                  <th>Departamento</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+
+              <tbody class="text-center">
+                <tr *ngFor="let funcionario of (funcionarios$ | async)">
+                  <td>{{ funcionario.nome }}</td>
+                  <td>{{ funcionario.email }}</td>
+                  <td>{{ funcionario.funcao }}</td>
+                  <td>{{ funcionario.departamento?.nome }}</td>
+                  <td class="d-grid d-md-block">
+                    <button (click)="salvar(modal, funcionario)" type="button"
+                      class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto">
+                      <i class="pi pi-user-edit"></i>
+                    </button>
+                    <button (click)="excluir(funcionario)" type="button" class="btn btn-outline-danger">
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ tituloModal }} de funcionário</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="modal.close('salvar')">
+    <div class="modal-body">
+
+      <div formGroupName="funcionario">
+
+        <div class="form-group mb-3">
+          <label for="nome" class="form-label">Nome</label>
+          <input formControlName="nome" class="form-control"
+            [ngClass]="(nome?.touched && nome?.invalid) ? 'is-invalid' : ''" type="text"
+            placeholder="Digite o nome do funcionário">
+          <div class="invalid-feedback" *ngIf="nome?.touched && nome?.invalid">
+            <span *ngIf="nome?.errors?.['required']">
+              <p> O nome é obrigatório.</p>
+            </span>
+            <span *ngIf="nome?.errors?.['minlength']">
+              <p> O nome precisa de no mínimo 3 caracteres.</p>
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input [ngClass]="(email?.touched && email?.invalid) ? 'is-invalid' : ''" formControlName="email"
+            class="form-control" type="text" placeholder="Digite o e-mail do funcionário">
+          <div class="invalid-feedback" *ngIf="email?.touched && email?.invalid">
+            <span *ngIf="email?.errors?.['required']">
+              <p> O e-mail é obrigatório.</p>
+            </span>
+            <span *ngIf="email?.errors?.['email']">
+              <p> O e-mail precisa estar no formato correto.</p>
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="funcao" class="form-label">Função</label>
+          <input [ngClass]="(funcao?.touched && funcao?.invalid) ? 'is-invalid' : ''" formControlName="funcao"
+            class="form-control" type="text" placeholder="Digite a função do funcionário">
+          <div class="invalid-feedback" *ngIf="funcao?.touched && funcao?.invalid">
+            <span *ngIf="funcao?.errors?.['required']">
+              <p> A função é obrigatória.</p>
+            </span>
+            <span *ngIf="funcao?.errors?.['minlength']">
+              <p> A função precisa ter no mínimo 3 caracteres.</p>
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="departamentoId" class="form-label">Departamento</label>
+          <ng-select [ngClass]="(departamentoId?.touched && departamentoId?.invalid) ? 'is-invalid' : ''"
+            formControlName="departamentoId" [clearable]="false" [searchable]="false">
+            <ng-option *ngFor="let departamento of (departamentos$ | async)" [value]="departamento.id">
+              {{departamento.nome}}
+            </ng-option>
+          </ng-select>
+          <div class="invalid-feedback" *ngIf="departamentoId?.touched && departamentoId?.invalid">
+            <span *ngIf="departamentoId?.errors?.['required']">
+              <p> O departamento precisa ser selecionado.</p>
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form group mb-3" *ngIf="!this.id?.value">
+        <label for="senha" class="form-label">Senha</label>
+        <input [ngClass]="(senha?.touched && senha?.invalid) ? 'is-invalid' : ''" formControlName="senha"
+          class="form-control" type="password" placeholder="Digite a senha do funcionário">
+        <div class="invalid-feedback" *ngIf="senha?.touched && senha?.invalid">
+          <span *ngIf="senha?.errors?.['required']">
+            <p> A senha é obrigatória.</p>
+          </span>
+          <span *ngIf="senha?.errors?.['minlength']">
+            <p> A senha precisa ter no mínimo 3 caracteres.</p>
+          </span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-dark" [disabled]="this.form.invalid">Salvar</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
