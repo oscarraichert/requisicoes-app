@@ -1,9 +1,9 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthenticationService } from '../auth/services/authentication.service';
 import { Departamento } from '../departamentos/models/departamento.model';
 import { DepartamentoService } from '../departamentos/services/departamento.service';
@@ -18,12 +18,15 @@ import { RequisicaoService } from './services/requisicao.service';
   selector: 'app-requisicao',
   templateUrl: './requisicao.component.html'
 })
-export class RequisicaoComponent implements OnInit {
+export class RequisicaoComponent implements OnInit, OnDestroy {
   public requisicoes$: Observable<Requisicao[]>;
   public departamentos$: Observable<Departamento[]>;
   public funcionarios$: Observable<Funcionario[]>;
   public equipamentos$: Observable<Equipamento[]>;
+  private processoAutenticado$: Subscription;
+
   public form: FormGroup;
+  public funcionarioLogadoId: string;
 
   constructor(
     private router: Router,
@@ -37,25 +40,42 @@ export class RequisicaoComponent implements OnInit {
     private fb: FormBuilder
   ) { }
 
+  ngOnDestroy(): void {
+    this.processoAutenticado$.unsubscribe();
+  }
+
   ngOnInit(): void {
     this.form = this.fb.group({
       requisicao: new FormGroup({
         id: new FormControl(""),
-        funcionario: new FormControl(""),
-        funcionarioId: new FormControl("", [Validators.required]),
+
         descricao: new FormControl("", [Validators.required, Validators.minLength(4)]),
         dataAbertura: new FormControl(""),
+
+        funcionario: new FormControl(""),
+        funcionarioId: new FormControl(""),
+
         departamentoId: new FormControl("", [Validators.required]),
         departamento: new FormControl(""),
+
         equipamento: new FormControl(""),
-        equipamentoId: new FormControl("", [Validators.required]),
+        equipamentoId: new FormControl(""),
       })
     });
 
     this.requisicoes$ = this.requisicaoService.selecionarTodos();
+    this.requisicoes$.subscribe(console.log);
+
     this.funcionarios$ = this.funcionarioService.selecionarTodos();
     this.departamentos$ = this.departamentoService.selecionarTodos();
     this.equipamentos$ = this.equipamentoService.selecionarTodos();
+
+    this.processoAutenticado$ = this.authService.usuarioLogado.subscribe(usuario => {
+      const email = usuario?.email!;
+
+      this.funcionarioService.selecionarFuncionarioLogado(email)
+        .subscribe(funcionario => this.funcionarioLogadoId = funcionario.id)
+    })
   }
 
   get id(): AbstractControl | null {
@@ -84,6 +104,11 @@ export class RequisicaoComponent implements OnInit {
 
   public async salvar(modal: TemplateRef<any>, requisicao?: Requisicao) {
     this.form.reset();
+
+    const dataAbertura = new Date();
+    this.form.get("requisicao.dataAbertura")?.setValue(dataAbertura.toLocaleDateString());
+
+    this.form.get("requisicao.funcionarioId")?.setValue(this.funcionarioLogadoId);
 
     if (requisicao) {
       const funcionario = requisicao.funcionario ? requisicao.funcionario : null;
@@ -135,5 +160,4 @@ export class RequisicaoComponent implements OnInit {
       this.toastrService.error(`Houve um erro ao excluir a requisição. Tente novamente.`, "Cadastro de Requisições");
     }
   }
-
 }

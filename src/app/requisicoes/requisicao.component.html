@@ -23,8 +23,8 @@
                 <tr>
                   <th>Solicitante</th>
                   <th>Descrição</th>
-                  <th>Departamento Destino</th>
-                  <th>Data Abertura</th>
+                  <th>Departamento</th>
+                  <th>Data de Abertura</th>
                   <th>Equipamento</th>
                   <th>Ações</th>
                 </tr>
@@ -36,7 +36,7 @@
                   <td>{{ requisicao.descricao }}</td>
                   <td>{{ requisicao.departamento?.nome }}</td>
                   <td>{{ requisicao.dataAbertura }}</td>
-                  <td>{{ requisicao.equipamento?.nome }}</td>
+                  <td>{{ requisicao.equipamento? requisicao.equipamento.nome : "Não Selecionado" }}</td>
                   <td class="d-grid d-md-block">
                     <button (click)="salvar(modal, requisicao)" type="button"
                       class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto">
@@ -68,24 +68,10 @@
       <div formGroupName="requisicao">
 
         <div class="form-group mb-3">
-          <label for="funcionarioId" class="form-label">Funcionario</label>
-          <ng-select [ngClass]="(funcionarioId?.touched && funcionarioId?.invalid) ? 'is-invalid' : ''"
-            formControlName="funcionarioId" [clearable]="false" [searchable]="false">
-            <ng-option *ngFor="let funcionario of (funcionarios$ | async)" [value]="funcionario.id">
-              {{funcionario.nome}}
-            </ng-option>
-          </ng-select>
-          <div class="invalid-feedback" *ngIf="funcionarioId?.touched && funcionarioId?.invalid">
-            <span *ngIf="funcionarioId?.errors?.['required']">
-              <p> O funcionário precisa ser selecionado.</p>
-            </span>
-          </div>
-        </div>
-
-        <div class="form-group mb-3">
           <label for="descricao" class="form-label">Descrição</label>
-          <input [ngClass]="(descricao?.touched && descricao?.invalid) ? 'is-invalid' : ''" formControlName="descricao"
-            class="form-control" type="text" placeholder="Descrição da requisição">
+          <textarea [ngClass]="(descricao?.touched && descricao?.invalid) ? 'is-invalid' : ''"
+            formControlName="descricao" class="form-control" type="text"
+            placeholder="Descrição da requisição"></textarea>
           <div class="invalid-feedback" *ngIf="descricao?.touched && descricao?.invalid">
             <span *ngIf="descricao?.errors?.['required']">
               <p> A descrição é obrigatória.</p>
@@ -97,7 +83,7 @@
         </div>
 
         <div class="form-group mb-3">
-          <label for="departamentoId" class="form-label">Departamento Destino</label>
+          <label for="departamentoId" class="form-label">Departamento de Destino</label>
           <ng-select [ngClass]="(departamentoId?.touched && departamentoId?.invalid) ? 'is-invalid' : ''"
             formControlName="departamentoId" [clearable]="false" [searchable]="false">
             <ng-option *ngFor="let departamento of (departamentos$ | async)" [value]="departamento.id">

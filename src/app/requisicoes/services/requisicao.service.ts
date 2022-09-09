@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { map, Observable } from 'rxjs';
+import { firstValueFrom, map, Observable } from 'rxjs';
+import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 import { Departamento } from 'src/app/departamentos/models/departamento.model';
 import { Equipamento } from 'src/app/equipamentos/models/equipamento.model';
 import { Funcionario } from 'src/app/funcionarios/models/funcionario.model';
@@ -13,7 +14,7 @@ export class RequisicaoService {
 
   private registros: AngularFirestoreCollection<Requisicao>;
 
-  constructor(private firestore: AngularFirestore) {
+  constructor(private firestore: AngularFirestore, private authService: AuthenticationService) {
     this.registros = this.firestore.collection<Requisicao>("requisicoes");
   }
 
@@ -22,8 +23,6 @@ export class RequisicaoService {
       return Promise.reject("item inválido");
     }
 
-    const date = new Date();
-    registro.dataAbertura = date.toLocaleDateString();
     const res = await this.registros.add(registro);
     registro.id = res.id;
     this.registros.doc(res.id).set(registro);
@@ -32,17 +31,6 @@ export class RequisicaoService {
   public selecionarTodos(): Observable<Requisicao[]> {
     return this.registros.valueChanges()
       .pipe(
-        map((requisicoes: Requisicao[]) => {
-          requisicoes.forEach(requisicao => {
-            this.firestore
-              .collection<Funcionario>("funcionarios")
-              .doc(requisicao.funcionarioId)
-              .valueChanges()
-              .subscribe(x => requisicao.funcionario = x);
-          });
-
-          return requisicoes
-        }),
 
         map((requisicoes: Requisicao[]) => {
           requisicoes.forEach(requisicao => {
@@ -51,18 +39,20 @@ export class RequisicaoService {
               .doc(requisicao.departamentoId)
               .valueChanges()
               .subscribe(x => requisicao.departamento = x);
-          })
 
-          return requisicoes
-        }),
-
-        map((requisicoes: Requisicao[]) => {
-          requisicoes.forEach(requisicao => {
             this.firestore
-              .collection<Equipamento>("equipamentos")
-              .doc(requisicao.equipamentoId)
+              .collection<Funcionario>("funcionarios")
+              .doc(requisicao.funcionarioId)
               .valueChanges()
-              .subscribe(x => requisicao.equipamento = x);
+              .subscribe(x => requisicao.funcionario = x);
+
+            if (requisicao.equipamentoId) {
+              this.firestore
+                .collection<Equipamento>("equipamentos")
+                .doc(requisicao.equipamentoId)
+                .valueChanges()
+                .subscribe(x => requisicao.equipamento = x);
+            }
           })
 
           return requisicoes

@@ -9,11 +9,7 @@ export class Requisicao {
   descricao: string;
   departamento?: Departamento;
   departamentoId: string;
-  dataAbertura: string;
-  equipamento?: Equipamento;
-  equipamentoId: string;
-
-  constructor() {
-    this.dataAbertura = Date.now().toLocaleString();
-  }
+  dataAbertura: Date | any;
+  equipamento?: Equipamento | null;
+  equipamentoId?: string;
 }
