@@ -30,7 +30,7 @@ import { RequisicaoComponent } from './requisicoes/requisicao.component';
     AppRoutingModule,
     ReactiveFormsModule,
     NgbModule,
-    AngularFireModule.initializeApp(environment.firease),
+    AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
     ToastrModule.forRoot({
