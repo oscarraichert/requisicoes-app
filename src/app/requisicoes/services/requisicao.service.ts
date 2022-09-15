@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { firstValueFrom, map, Observable } from 'rxjs';
+import { firstValueFrom, map, Observable, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 import { Departamento } from 'src/app/departamentos/models/departamento.model';
 import { Equipamento } from 'src/app/equipamentos/models/equipamento.model';
@@ -66,5 +66,15 @@ export class RequisicaoService {
 
   public excluir(registro: Requisicao): Promise<void> {
     return this.registros.doc(registro.id).delete();
+  }
+
+  public selecionarPorId(id: string): Observable<Requisicao> {
+    return this.selecionarTodos()
+      .pipe(
+        take(1),
+        map(requisicoes => {
+          return requisicoes.filter(req => req.id === id)[0];
+        })
+      );
   }
 }
